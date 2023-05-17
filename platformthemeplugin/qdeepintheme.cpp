@@ -6,9 +6,7 @@
 #include "qdeepinfiledialoghelper.h"
 #include "filedialogmanager_interface.h"
 #include "dthemesettings.h"
-#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-#include "../3rdparty/qdbustrayicon_p.h"
-#endif
+#include "ddbustrayicon.h"
 
 #include <DGuiApplicationHelper>
 #include <DPlatformTheme>
@@ -587,8 +585,9 @@ QPixmap QDeepinTheme::fileIconPixmap(const QFileInfo &fileInfo, const QSizeF &si
 #if !defined(QT_NO_DBUS) && !defined(QT_NO_SYSTEMTRAYICON) && QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
 QPlatformSystemTrayIcon *QDeepinTheme::createPlatformSystemTrayIcon() const
 {
-    if (isDBusTrayAvailable())
-        return new thirdparty::QDBusTrayIcon();
+    QDBusInterface systrayHost("org.kde.StatusNotifierWatcher", "/StatusNotifierWatcher", "org.kde.StatusNotifierWatcher", QDBusConnection::sessionBus());
+    if (systrayHost.isValid() && systrayHost.property("IsStatusNotifierHostRegistered").toBool())
+        return new DDBusTrayIcon();
     return nullptr;
 }
 #endif

@@ -46,6 +46,7 @@ dtk_add_plugin(
     INSTALL_DIR
         ${PLUGIN_INSTALL_BASE_DIR}/platformthemes
     SOURCES
+        ddbustrayicon.cpp
         dthemesettings.cpp
         qdeepinfiledialoghelper.cpp
         qdeepintheme.cpp
@@ -53,6 +54,7 @@ dtk_add_plugin(
         main.cpp
         ${DBUS_INTERFACES}
     HEADERS
+        ddbustrayicon.h
         dthemesettings.h
         qdeepinfiledialoghelper.h
         qdeepintheme.h
