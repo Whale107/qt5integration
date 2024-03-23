@@ -1360,15 +1360,13 @@ void ChameleonStyle::drawControl(QStyle::ControlElement element, const QStyleOpt
     }
     case CE_ProgressBarGroove: {  //滑槽显示
         if (const QStyleOptionProgressBar *progBar = qstyleoption_cast<const QStyleOptionProgressBar *>(opt)) {
-            int frameRadius = DStyle::pixelMetric(PM_FrameRadius, opt, w);
             bool horizontal = progBar->state & State_Horizontal;
 #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
             horizontal |= progBar->orientation == Qt::Horizontal;
 #endif
             int height = horizontal ? opt->rect.height() : opt->rect.width();
-            if (frameRadius * 2 >= height) {
-                frameRadius = qMin(height / 2, 4);
-            }
+            int frameRadius = height / 2;
+
             p->setBrush(getColor(opt, DPalette::ObviousBackground, w));
             p->drawRoundedRect(opt->rect, frameRadius, frameRadius);
         }
@@ -1384,15 +1382,12 @@ void ChameleonStyle::drawControl(QStyle::ControlElement element, const QStyleOpt
             int max = progBar->maximum;
             int val = progBar->progress;
             int drawWidth = 0;
-            int frameRadius = DStyle::pixelMetric(PM_FrameRadius, opt, w);
             bool horizontal = progBar->state & State_Horizontal;
 #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
             horizontal |= progBar->orientation == Qt::Horizontal;
 #endif
             int height = horizontal ? rect.height() : rect.width();
-            if (frameRadius * 2 >= height) {
-                frameRadius = qMin(height / 2, 4);
-            }
+            int frameRadius = height / 2;
 
             if (horizontal) {
                 drawWidth = (val * 1.0 / (max - min)) * rect.width();
@@ -1444,8 +1439,13 @@ void ChameleonStyle::drawControl(QStyle::ControlElement element, const QStyleOpt
                         path2.arcTo(endRect, 90, -180);
                         p->drawPath(path2);
                     }
-                } else
+                } else {
+                    QPainterPath clipPath;
+                    clipPath.addRoundedRect(opt->rect, frameRadius, frameRadius);
+                    p->setClipPath(clipPath);
+                    p->setClipping(true);
                     p->drawRoundedRect(rect, frameRadius, frameRadius);
+                }
             }
         }
         return;
